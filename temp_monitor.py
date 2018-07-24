@@ -10,21 +10,19 @@ my_input = ''
 my_data = []
 while my_input != 'exit':
     my_input = input("Write filename to read or type 'exit' to end: ")
-
     if my_input != 'exit':
         my_file = pd.read_excel(my_input, parse_dates=['Timestamp for sample frequency every 15 min'])
+        print(my_file)
         my_data = my_file.append(my_file)
-        print(my_data)
         continue
-
     if my_input == 'exit':
+        my_data.sort_values(by='Timestamp for sample frequency every 15 min')
+        print(my_data)
         break
 
 time = my_data[my_data.columns[0]]
 temp = my_data[my_data.columns[1]]
 humidity = my_data[my_data.columns[2]]
-
-print(time)
 
 # output to static HTML file
 output_file("output.html")
