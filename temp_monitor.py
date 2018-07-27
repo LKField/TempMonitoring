@@ -10,25 +10,30 @@ import pandas as pd
 import matplotlib as plt
 import numpy as np
 from datetime import datetime, timedelta as dt
-import xlrd
+from pathlib import Path
+
+pathlist = Path('Demo1').glob('**/*.csv')
+for path in pathlist:
+    # because path is object not string
+    path_in_str = str(path)
+    print(path_in_str)
 
 # Ask user for input names of file (later create a script or other mechanism to automate this)
 my_input = ''
 my_data = pd.DataFrame() # create empty data frame to populate with read in values
 print(my_data)
 while my_input != 'exit':
-    my_input = input("Write filename to read or type 'exit' to end: ")
+    my_input = path_in_str
     if my_input != 'exit':
-        my_file = pd.read_excel(my_input, parse_dates=['Timestamp for sample frequency every 15 min']) # read in data
-        print(len(my_file))
+        my_file = pd.read_csv(my_input, parse_dates=['Timestamp for sample frequency every 15 min']) # read in data
+#        print(len(my_file))
         my_file.set_index(keys='Timestamp for sample frequency every 15 min', drop=True, inplace=True) # set time as index
         my_data = my_data.append(my_file) # append the data to dataframe 'my_data'
         my_data = my_data.sort_values(['Timestamp for sample frequency every 15 min'], ascending=True) # sort the data
-        print(len(my_data))
+#        print(len(my_data))
     else:
         break
 
-print(my_data)
 temp = my_data[my_data.columns[0]]
 humidity = my_data[my_data.columns[1]]
 
