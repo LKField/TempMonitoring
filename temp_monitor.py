@@ -11,7 +11,7 @@ from pathlib import Path
 from bokeh.plotting import figure, output_file, show
 from bokeh.layouts import row, widgetbox, gridplot
 from bokeh.models import HoverTool
-from bokeh.models.widgets import Select
+from bokeh.models.widgets import Select, RangeSlider
 
 my_data = pd.DataFrame() # create empty data frame to populate with read in values
 my_input = input('Enter folder name or exit: ') # ask user to pick folder or exit
@@ -46,7 +46,9 @@ p1.line(x=my_data.index, y=temp, line_width=2)
 p2.line(x=my_data.index, y=humidity, line_width=2)
 
 select = Select(title="Choose Lab and Sensor:", value="Demo Sensor 1", options=["Demo Sensor 1", "Demo Sensor 2", "Eng Sensor 1", "Eng Sensor 1"])
-grid = gridplot([[p1,p2],[widgetbox(select)]])
+range_slider = RangeSlider(start=0, end=10, value=(1,9), step=.1, title="Date")
+
+grid = gridplot([[p1,p2],[widgetbox(select),widgetbox(range_slider)]])
 
 # show the results
 show(grid)
