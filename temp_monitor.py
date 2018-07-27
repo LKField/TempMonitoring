@@ -3,14 +3,15 @@
 # Author: Lucretia Field
 # Date: July 2018
 
-from bokeh.plotting import figure, output_file, show
-import bokeh.layouts
-from bokeh.layouts import row
 import pandas as pd
 import matplotlib as plt
 import numpy as np
 from datetime import datetime, timedelta as dt
 from pathlib import Path
+from bokeh.plotting import figure, output_file, show
+from bokeh.layouts import row, widgetbox
+from bokeh.models import HoverTool
+from bokeh.models.widgets import Select
 
 my_data = pd.DataFrame() # create empty data frame to populate with read in values
 my_input = input('Enter folder name or exit: ') # ask user to pick folder or exit
@@ -23,6 +24,7 @@ for path in pathlist:
     my_data = my_data.append(my_file) # append the data to dataframe 'my_data'
     my_data = my_data.sort_values(['Timestamp for sample frequency every 15 min'], ascending=True) # sort the data
 
+print(my_data)
 # define temperature and humidity data
 temp = my_data[my_data.columns[0]]
 humidity = my_data[my_data.columns[1]]
@@ -43,5 +45,7 @@ p2.yaxis[0].ticker.desired_num_ticks = 20
 p1.line(x=my_data.index, y=temp, line_width=2)
 p2.line(x=my_data.index, y=humidity, line_width=2)
 
+select = Select(title="Choose Lab and Sensor:", value="Demo Sensor 1", options=["Demo Sensor 1", "Demo Sensor 2", "Eng Sensor 1", "Eng Sensor 1"])
+
 # show the results
-show(row(p1, p2))
+show(row(p1, p2,widgetbox(select)))
