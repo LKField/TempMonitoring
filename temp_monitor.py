@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime, timedelta as dt
 from pathlib import Path
 from bokeh.plotting import figure, output_file, show
-from bokeh.layouts import row, widgetbox
+from bokeh.layouts import row, widgetbox, gridplot
 from bokeh.models import HoverTool
 from bokeh.models.widgets import Select
 
@@ -46,6 +46,7 @@ p1.line(x=my_data.index, y=temp, line_width=2)
 p2.line(x=my_data.index, y=humidity, line_width=2)
 
 select = Select(title="Choose Lab and Sensor:", value="Demo Sensor 1", options=["Demo Sensor 1", "Demo Sensor 2", "Eng Sensor 1", "Eng Sensor 1"])
+grid = gridplot([[p1,p2],[widgetbox(select)]])
 
 # show the results
-show(row(p1, p2,widgetbox(select)))
+show(grid)
