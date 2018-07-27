@@ -18,7 +18,6 @@ pathlist = Path(my_input).glob('**/*.csv') # gather all files in folder
 # iterate through the provided folder and load all files to my_data
 for path in pathlist:
     path_in_str = str(path)
-    print(path_in_str)
     my_file = pd.read_csv(path, parse_dates=['Timestamp for sample frequency every 15 min']) # read in data from chosen folder
     my_file.set_index(keys='Timestamp for sample frequency every 15 min', drop=True, inplace=True) # set time as index
     my_data = my_data.append(my_file) # append the data to dataframe 'my_data'
@@ -32,11 +31,11 @@ humidity = my_data[my_data.columns[1]]
 output_file("output.html")
 
 # create two new plots with a title and axis labels
-p1 = figure(title="Temperature over Time in Demo Lab 1", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Temperature (deg F)')
+p1 = figure(title="Temperature over Time", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Temperature (deg F)')
 p1.xaxis[0].ticker.desired_num_ticks = 20 #set number of marks in graphs
 p1.yaxis[0].ticker.desired_num_ticks = 20
 
-p2 = figure(title="Humidity over Time in Demo Lab 1", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Humidity (%)')
+p2 = figure(title="Humidity over Time", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Humidity (%)', x_range=p1.x_range)
 p2.xaxis[0].ticker.desired_num_ticks = 20
 p2.yaxis[0].ticker.desired_num_ticks = 20
 
