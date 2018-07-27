@@ -33,7 +33,9 @@ humidity = my_data[my_data.columns[1]]
 output_file("output.html")
 
 # create a new plot with a title and axis labels
-p = figure(title="Temperature over Time in Demo Lab 1", x_axis_type='datetime', x_axis_label='Time', y_axis_label='Temperature (deg F)')
+p = figure(title="Temperature over Time in Demo Lab 1", x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Temperature (deg F)')
+p.xaxis[0].ticker.desired_num_ticks = 30
+p.yaxis[0].ticker.desired_num_ticks = 30
 p.sizing_mode='scale_height'
 
 # add a line renderer with legend and line thickness
