@@ -12,16 +12,17 @@ import numpy as np
 from datetime import datetime, timedelta as dt
 from pathlib import Path
 
+my_data = pd.DataFrame() # create empty data frame to populate with read in values
 my_input = input('Enter folder name or exit: ') # ask user to pick folder or exit
 pathlist = Path(my_input).glob('**/*.csv') # gather all files in folder
+# iterate through the provided folder and load all files to my_data
 for path in pathlist:
     path_in_str = str(path)
-
-my_data = pd.DataFrame() # create empty data frame to populate with read in values
-my_file = pd.read_csv(path_in_str, parse_dates=['Timestamp for sample frequency every 15 min']) # read in data from chosen folder
-my_file.set_index(keys='Timestamp for sample frequency every 15 min', drop=True, inplace=True) # set time as index
-my_data = my_data.append(my_file) # append the data to dataframe 'my_data'
-my_data = my_data.sort_values(['Timestamp for sample frequency every 15 min'], ascending=True) # sort the data
+    print(path_in_str)
+    my_file = pd.read_csv(path, parse_dates=['Timestamp for sample frequency every 15 min']) # read in data from chosen folder
+    my_file.set_index(keys='Timestamp for sample frequency every 15 min', drop=True, inplace=True) # set time as index
+    my_data = my_data.append(my_file) # append the data to dataframe 'my_data'
+    my_data = my_data.sort_values(['Timestamp for sample frequency every 15 min'], ascending=True) # sort the data
 
 # define temperature and humidity data
 temp = my_data[my_data.columns[0]]
