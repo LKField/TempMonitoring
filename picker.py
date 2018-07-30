@@ -5,21 +5,24 @@ from datetime import datetime, timedelta as dt
 from pathlib import Path
 import pandas as pd
 
-from bokeh.layouts import column
+from bokeh.layouts import column, row
 from bokeh.models import Button
 from bokeh.palettes import RdYlBu3
 from bokeh.plotting import figure, curdoc
 from bokeh.models.widgets import RadioGroup
 
 # create a plot and style its properties
-p = figure(x_range=(0, 100), y_range=(0, 100), toolbar_location=None)
-p.border_fill_color = 'black'
-p.background_fill_color = 'black'
-p.outline_line_color = None
-p.grid.grid_line_color = None
+p1 = figure(title="Temperature over Time", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Temperature (deg F)')
+p1.xaxis[0].ticker.desired_num_ticks = 20 #set number of marks in graphs
+p1.yaxis[0].ticker.desired_num_ticks = 20
+
+p2 = figure(title="Humidity over Time", plot_width=800, x_axis_type='datetime', x_axis_label='Date and Time', y_axis_label='Humidity (%)', x_range=p1.x_range)
+p2.xaxis[0].ticker.desired_num_ticks = 20
+p2.yaxis[0].ticker.desired_num_ticks = 20
+
 
 # add a text renderer to our plot (no data yet)
-r = p.text(x=[], y=[], text=[], text_color=[], text_font_size="20pt",
+r = p1.text(x=[], y=[], text=[], text_color=[], text_font_size="20pt",
            text_baseline="middle", text_align="center")
 
 i = 0
@@ -46,6 +49,10 @@ def callback():
         my_data = my_data.sort_values(['Timestamp for sample frequency every 15 min'], ascending=True) # sort the data
 
     print(my_data)
+    temp = my_data[my_data.columns[0]]
+    humidity = my_data[my_data.columns[1]]
+    p1.line(x=my_data.index, y=temp, line_width=2)
+    p2.line(x=my_data.index, y=humidity, line_width=2)
 
 
 # add a button widget and configure with the call back
@@ -56,4 +63,4 @@ button.on_click(callback)
 # radio.on_change(callback)
 
 # put the button and plot in a layout and add to the document
-curdoc().add_root(column(button, p))
+curdoc().add_root(row(button, p1, p2))
