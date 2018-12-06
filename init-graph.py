@@ -1,14 +1,22 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 import csv
 import glob
+import os
+
+cdir = os.getcwd()
+folder_list = (next(os.walk(cdir))[1])
+print(folder_list)
 
 # create a file list of all the .csv files in the given folder
 file_list = glob.glob("*.csv")
-print(file_list)
+#print(file_list)
+
+#print(os.listdir())
 
 dates = []
 temps = []
@@ -16,7 +24,7 @@ humids = []
 
 # open all the .csv files and create separated data lists
 for name in file_list:
-    print("After 'for' Opening:", name)
+    #print("After 'for' Opening:", name)
     with open(name) as csvfile:
         my_data = csv.reader(csvfile) # read in csv file
         next(my_data, None)
@@ -35,12 +43,6 @@ for name in file_list:
 #print(form_dates)
 #print(temps)
 #print(humids)
-df = pd.DataFrame({"date": form_dates, "temp": temps, "humid": humids})
-df = df.sort_values(by=['date'])
-
-# create traces to graph from gathered data
-trace1 = go.Scatter(x=df.date, y=df.temp, name='Temperature (F)')
-trace2 = go.Scatter(x=df.date, y=df.humid, name='Relative Humidity (%)')
 
 # graph the data using Dash in two separate graphs
 app = dash.Dash()
@@ -49,7 +51,7 @@ app = dash.Dash()
 select = html.Div([
     dcc.Dropdown(
     id='select',
-    options=[ {'label': x, 'value': x} for x in file_list]
+    options=[ {'label': x, 'value': x} for x in folder_list]
     )
     ],
     style={'width' : '25%',
@@ -57,34 +59,39 @@ select = html.Div([
 )
 # creates initialization of graphs, not currently in use
 graph = dcc.Graph(
-    id='temperature-graph',
+    id='graph',
     figure={
-    'data':[{}]
+    'data':[]
     }
 )
-graph = dcc.Graph(
-    id='humidity-graph',
-    figure={
-    'data':[{}]
-    }
+app.layout = html.Div(children=[select,
+                                graph])
+
+@app.callback(
+    Output(component_id='graph', component_property='figure'),
+    [Input(component_id='select', component_property='value')]
 )
-app.layout = html.Div(children=[
-    html.H1(children='Demo Lab 1 Norwood Temperature and Humidity Data'),
+def update_graph(file_list):
+    # return a defined state if no file is picked
+    if file_list is None:
+        return None
+    print("In update_graph. You've selected'{}'".format(file_list))              # For debug
+    # create and sort the data frame based on input
+    df = pd.DataFrame({"date": form_dates, "temp": temps, "humid": humids})
+    df = df.sort_values(by=['date'])
+    # create traces
+    trace1 = go.Scatter(x=df.date, y=df.temp, name='Temperature (F)')
+    trace2 = go.Scatter(x=df.date, y=df.humid, name='Relative Humidity (%)')
+    # actually graph the data
     dcc.Graph(
-        id='temperature-graph',
+        id='graph',
         figure={
-            'data': [trace1],
+            'data': [trace1, trace2],
             'layout':
             go.Layout(title='Temperature (F)')
-        }),
-    dcc.Graph(
-        id='humidity-graph',
-        figure={
-            'data': [trace2],
-            'layout':
-            go.Layout(title='Relative Humidity (%)')
         })
-])
+
+    return {'data' : [trace1, trace2]}                  # Return the two lines (traces) for plotting.
 
 if __name__ == '__main__':
     app.run_server(debug=True)
